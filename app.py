@@ -1,90 +1,35 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
-from dotenv import load_dotenv
-import os
-import google.generativeai as genai
-from PyPDF2 import PdfReader
-from io import BytesIO
+import streamlit as st
+import PyPDF2
 import docx
+from your_resume_categorization_module import categorize_resume  # Assuming you have a function for categorization
 
-# Load environment variables
-load_dotenv()
+# Title
+st.title("AI-Powered Resume Categorization")
 
-# Configure Gemini API
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# File uploader
+uploaded_file = st.file_uploader("Select a PDF or Word Resume", type=["pdf", "docx"])
 
-app = Flask(__name__)
+if uploaded_file is not None:
+    # Process the file
+    if uploaded_file.type == "application/pdf":
+        # Read the PDF
+        pdf_reader = PyPDF2.PdfReader(uploaded_file)
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text()
 
-# Function to get response from Gemini
-def get_gemini_response(input_text, prompt):
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content([prompt, input_text])
-    return response.text
+    elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        # Read the Word file
+        doc = docx.Document(uploaded_file)
+        text = ""
+        for para in doc.paragraphs:
+            text += para.text
 
-# Function to extract text from PDF
-def extract_text_from_pdf(file):
-    reader = PdfReader(file)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-    return text
+    # Display the content
+    st.subheader("Resume Content")
+    st.text_area("Extracted Text", text, height=300)
 
-# Function to extract text from Word file
-def extract_text_from_word(file):
-    doc = docx.Document(file)
-    text = ""
-    for paragraph in doc.paragraphs:
-        text += paragraph.text + "\n"
-    return text
-
-# Function to handle text extraction
-def extract_text(uploaded_file):
-    if uploaded_file.filename.endswith(".pdf"):
-        return extract_text_from_pdf(BytesIO(uploaded_file.read()))
-    elif uploaded_file.filename.endswith(".docx"):
-        return extract_text_from_word(BytesIO(uploaded_file.read()))
-    else:
-        raise Exception("Unsupported file type. Please upload a PDF or DOCX file.")
-
-# System prompt for the Gemini model
-SYSTEM_PROMPT = """
-You are an expert in analyzing resumes. 
-You will receive a resume in text format extracted from a PDF or Word document. 
-Analyze the text and predict its corresponding job category, such as Software Developer, Data Scientist, HR, Marketing, etc.
-Provide a brief justification for your prediction.
-"""
-
-# Route to display the HTML form
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-# Route to upload file and get prediction
-@app.route("/categorize-resume/", methods=["POST"])
-def categorize_resume():
-    if "file" not in request.files:
-        return jsonify({"error": "No file part"}), 400
-    
-    file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"error": "No selected file"}), 400
-    
-    try:
-        # Extract text
-        extracted_text = extract_text(file)
-        
-        # Generate Gemini response
-        response = get_gemini_response(extracted_text, SYSTEM_PROMPT)
-        
-        # Store the result and pass it to the result page
-        result = {
-            "filename": file.filename,
-            "job_category_prediction": response
-        }
-        
-        return render_template("result.html", result=result)
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    # Categorize the resume
+    if st.button("Categorize Resume"):
+        job_category = categorize_resume(text)  # Replace with your categorization logic
+        st.write(f"Job Category: {job_category}")
