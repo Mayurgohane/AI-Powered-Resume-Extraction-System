@@ -42,7 +42,7 @@ def input_image_setup(uploaded_file):
 
 ##initialize our streamlit app
 
-st.set_page_config(page_title="Gemini Image Demo")
+st.set_page_config(page_title="AI-Powered-Resume-Extraction-System")
 
 st.header("Gemini Application")
 input=st.text_input("Input Prompt: ",key="input")
@@ -58,7 +58,7 @@ submit=st.button("Tell me about the image")
 input_prompt = """
                You are an expert in understanding Resume and CV.
                You will receive input PDF or Word file as  Resume and CV &
-               you will have to answer questions based on the input image
+               you will have to  predict its corresponding job category
                """
 
 
