@@ -115,7 +115,7 @@ st.markdown("""
 st.header("AI-Powered Resume Categorization")
 
 # User Input section
-st.subheader("Upload Your Resume ")
+st.subheader("Upload Your esume ")
 
 # File uploader
 uploaded_file = st.file_uploader("Choose a PDF or Word file...", type=["pdf", "docx"])
