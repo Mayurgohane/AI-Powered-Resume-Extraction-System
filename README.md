@@ -2,7 +2,7 @@
 
 
 ## Overview
-This project is a **AI-Powered-Resume-Extraction-System** developed with **Streamlit** and deployed on **AWS EC2**. It uses the **Gemini LLM** model to classify resumes into job categories based on the content of the resume. The goal is to automate and streamline the resume screening process for HR teams.
+This project **AI-Powered-Resume-Extraction-System** developed with **Streamlit** and deployed on **AWS EC2**. It uses the **Gemini LLM** model to classify resumes into job categories based on the content of the resume. The goal is to automate and streamline the resume screening process for HR teams.
 
 ## Features
 - **Streamlit Interface**: An interactive, user-friendly web application.
@@ -15,8 +15,6 @@ This project is a **AI-Powered-Resume-Extraction-System** developed with **Strea
 - **Gemini LLM**: Language model for natural language processing and classification.
 - **AWS EC2**: Cloud hosting platform.
 - **Python 3**: Programming language for the application backend.
-- **GitHub Actions**: CI/CD setup for automated deployment.
-
 
 ### Prerequisites
 - Python 3.8 or higher
